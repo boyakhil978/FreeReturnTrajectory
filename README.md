@@ -1,58 +1,50 @@
-# Free-Return Trajectory
+# Free-Return Trajectory Accuracy (AE 370 Group Project 1)
 
-Models an Earth–Moon free-return trajectory with the planar circular restricted three-body problem (CR3BP), integrated with RK4, and checks the model against Apollo 8 flight data.
-
-## Notebooks
-
-| Notebook | What it covers |
-|---|---|
-| [`FreeReturnTrajectory.ipynb`](FreeReturnTrajectory.ipynb) | Equations of motion, stiffness analysis at L4, RK4 vs AB4 stability regions, initial conditions and RK4 convergence. |
-| [`ApolloComparison.ipynb`](ApolloComparison.ipynb) | Runs the model from Apollo 8's real translunar injection state, grades its predictions against the flight data, and marks where Apollo 8 deliberately left the free return. |
-| [`ArtemisIIComparison.ipynb`](ArtemisIIComparison.ipynb) | Verifies the model against orbits from the JPL Three-Body Periodic Orbits catalog, then compares it with Artemis II's flown free return from JPL Horizons, including how well it forecasts the entry flight-path angle. |
+How accurate must a free-return translunar injection (TLI) burn be, and what does correcting an injection error cost? The spacecraft is modelled with the planar circular restricted three-body problem (CR3BP) and integrated with fixed-step RK4, implemented from scratch.
 
 ## Layout
 
-```
-.
-├── main.tex                     # report
-├── FreeReturnTrajectory.ipynb   # main analysis
-├── ApolloComparison.ipynb       # validation against Apollo 8
-├── ArtemisIIComparison.ipynb    # verification against the JPL catalog, validation against Artemis II
-├── freereturn/                  # shared model code, imported by all notebooks
-│   ├── constants.py             # masses, radii, nondimensional scales L, T, V, mu
-│   ├── dynamics.py              # f_spacecraft(u, t), its Jacobian, and the Jacobi constant
-│   ├── integrators.py           # rk4
-│   ├── trajectory.py            # frame conversions, initial states, perilune / entry detection
-│   ├── comparison.py            # grading and scorecard plot shared by the comparison notebooks
-│   ├── jpl.py                   # JPL Horizons and Three-Body Periodic Orbits API clients (cached)
-│   ├── apollo8.py               # Apollo 8 reference data, with sources
-│   └── artemis2.py              # Artemis II event and burn list, with sources
-├── data/                        # cached JPL API responses, so notebooks run offline
-└── tests/
-    └── test_model.py            # sanity checks for the model code
-```
+| Path | What it is |
+|---|---|
+| `Helpers/rk4.py` | The numerical method: `rk4_step` and the fixed-step marcher `rk4(f, u_start, t_end, dt)` |
+| `Helpers/cr3bp.py` | The dynamics `f(u, t, mu)`, TLI initial state, entry flight-path angle, Jacobi constant, impulsive burns, and `fly_to_entry` (RK4 with event location at entry interface) |
+| `Helpers/jacobian.py` | Analytical Jacobian of `f` |
+| `Helpers/constants.py` | Physical constants, nondimensional units, entry corridor |
+| `scripts/` | One script per study; each writes its figure to `figures/` |
+| `results/nominal.json` | Retargeted nominal trajectory, read by the studies and notebooks |
+| `FreeReturnTrajectory.ipynb` | Method development: stiffness, stability regions, self-convergence |
+| `ApolloComparison.ipynb` | Model validation against Apollo 8 (not a code verification) |
+| `main.tex` | The report |
 
-The notebooks sit at the top level so `import freereturn` works with no install step. Jupyter runs each notebook from its own folder, and that folder holds the package.
+## Reproducing the results
 
-## Data
+Run everything from the repository root, in this order (about 5 minutes in total):
 
-`freereturn/jpl.py` downloads from the [JPL Horizons API](https://ssd-api.jpl.nasa.gov/doc/horizons.html) and the [JPL Three-Body Periodic Orbits API](https://ssd-api.jpl.nasa.gov/doc/periodic_orbits.html) and caches each response as JSON in `data/`. The cache is committed, so every notebook runs offline and gives the same numbers. Delete a file in `data/` to download it again.
-
-## Setup
-
-```sh
-python -m venv .venv
-source .venv/bin/activate
+```bash
 pip install -r requirements.txt
-jupyter notebook
+
+python scripts/retarget_nominal.py            # results/nominal.json (run first)
+python scripts/make_premise_figure.py         # figures/premise_geometry.pdf
+python scripts/verify_kepler.py               # figures/verify_kepler.pdf
+python scripts/verify_jpl_dro.py              # figures/verify_jpl_dro.pdf
+python scripts/verify_jacobi.py               # figures/verify_jacobi.pdf
+python scripts/select_dt.py                   # figures/select_dt.pdf
+python scripts/stiffness_along_trajectory.py  # figures/stiffness_along_trajectory.pdf
 ```
 
-Run the tests from the repository root:
+Then run the two notebooks top to bottom.
 
-```sh
-python -m pytest
-```
+## Verification summary
 
-## Units
+| Check | What it tests | Result |
+|---|---|---|
+| Exact two-body solution (mu = 0, e = 0.97) | Integrator and rotating-frame terms | Observed order 4.02-4.21 |
+| JPL Earth-Moon DRO, one period | Full three-body equations against published data | Observed order 4.03-4.13; Jacobi constant matches the catalog to 13 digits |
+| Jacobi constant along the nominal | Conservation law on the actual trajectory | Drift falls at order 4.03-4.22 |
+| Entry flight-path angle vs dt | Event location keeps fourth order; dt selection | Error 2.3e-4 deg at the study dt, about 60x below the tolerances |
 
-The model works in nondimensional units: length $L$ = 384,400 km (Earth–Moon distance), time $T$ = 4.348 days (1/ω of the Earth–Moon system), and velocity $V = L/T$. Helper functions in `freereturn/trajectory.py` take and return km, km/s and hours.
+## Sources
+
+- JPL Solar System Dynamics, Three-Body Periodic Orbits: https://ssd.jpl.nasa.gov/tools/periodic_orbits.html
+- Apollo 13 Flight Journal, Day 5 (entry corridor): https://apollojournals.org/afj/ap13fj/20day5-wobblesandbursts.html
+- Rea, McNamara and Kane, "Orion Artemis I Entry Performance," AAS 24-174 (entry interface at 400 kft)
