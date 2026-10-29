@@ -1,6 +1,9 @@
 import numpy as np
+from scipy.optimize import brentq
 
-from freereturn.constants import MU, L, T, V, R_EARTH, R_MOON, R_EI
+from freereturn.constants import MU, L, T, V, R_EARTH, R_MOON, R_EI, R_0
+from freereturn.dynamics import f_spacecraft
+from freereturn.integrators import rk4_step
 
 # Every helper takes optional length / time / velocity units (lu [km], tu [s], vu [km/s]) so the
 # same nondimensional model can be scaled to a different Earth-Moon distance. See unit_scales().
@@ -100,10 +103,41 @@ def trajectory_events(u, times_ND, lu=L, tu=T):
         events.update(entered=False, return_perigee_alt=r_E[j] - R_EARTH, t_ei=t_h[j], ei_idx=j)
     else:
         j = k + crossings[0]
-        # linearly interpolate between the steps on either side of R_EI
-        s = (r_E[j] - R_EI) / (r_E[j] - r_E[j + 1])
-        u_ei = u[j] + s*(u[j + 1] - u[j])
-        events.update(entered=True, return_perigee_alt=None, t_ei=t_h[j] + s*(t_h[j + 1] - t_h[j]), ei_idx=j)
+        u_ei, tau = locate_entry(u[j], times_ND[j], times_ND[j + 1] - times_ND[j], lu)
+        events.update(entered=True, return_perigee_alt=None, t_ei=t_h[j] + tau*tu/3600, ei_idx=j)
         events['ei_speed'], events['ei_fpa'] = inertial_speed_fpa(u_ei, lu/tu)
 
     return events
+
+def locate_entry(u_k, t_k, dt, lu=L, mu=MU):
+    '''State at entry interface inside the step that crosses it.
+
+    Finds tau in (0, dt) such that one RK4 step of length tau from u_k lands exactly on
+    |r_E| = R_EI. This keeps the event fourth-order accurate; interpolating linearly between
+    the two steps would only be second order.
+
+    Returns
+    -------
+    u_ei : ndarray, the state at entry interface
+    tau : float, time from t_k to entry interface (nondimensional)
+    '''
+    f = lambda u, t: f_spacecraft(u, t, mu)
+    g = lambda tau: earth_dist(rk4_step(f, u_k, t_k, tau), lu) - R_EI
+    tau = brentq(g, 0.0, dt, xtol=1e-15, rtol=4*np.finfo(float).eps, maxiter=200)
+    return rk4_step(f, u_k, t_k, tau), tau
+
+def tli_state(delta_v, phi, r0=R_0):
+    '''Rotating-frame state right after a tangential TLI burn of delta_v [km/s] from a circular
+    parking orbit of radius r0 [km], at position angle phi [rad] from the Earth-Moon line.'''
+    return initial_state(r0, circular_speed(r0) + delta_v, 0.0, phi)
+
+def apply_burn(u, dv, vu=V, mu=MU):
+    '''Impulsive burn of dv [km/s] along the Earth-centred inertial velocity.
+
+    The position does not change, so the inertial and rotating-frame velocities change by the
+    same vector.
+    '''
+    v_in = np.array([u[2] - u[1], u[3] + u[0] + mu])
+    u_new = np.array(u, dtype=float)
+    u_new[2:] += dv/vu * v_in/np.linalg.norm(v_in)
+    return u_new

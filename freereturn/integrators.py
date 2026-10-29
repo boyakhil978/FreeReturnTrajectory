@@ -1,5 +1,14 @@
 import numpy as np
 
+def rk4_step(f, u, t, dt):
+    '''One RK4 step of length dt from state u at time t.'''
+    y1 = f(u, t)
+    y2 = f(u + 0.5*dt*y1, t + 0.5*dt)
+    y3 = f(u + 0.5*dt*y2, t + 0.5*dt)
+    y4 = f(u + dt*y3, t + dt)
+
+    return u + (dt/6) * (y1 + 2*y2 + 2*y3 + y4)
+
 def rk4(f, u_start, t_end, dt):
     '''March u' = f(u, t) from t = 0 to t_end with RK4.
 
@@ -13,11 +22,6 @@ def rk4(f, u_start, t_end, dt):
     u[0] = u_start
 
     for k in range(n):
-        y1 = f(u[k], k*dt)
-        y2 = f(u[k] + 0.5*dt*y1, (k + 0.5)*dt)
-        y3 = f(u[k] + 0.5*dt*y2, (k + 0.5)*dt)
-        y4 = f(u[k] + dt*y3, (k + 1)*dt)
-
-        u[k+1] = u[k] + (dt/6) * (y1 + 2*y2 + 2*y3 + y4)
+        u[k+1] = rk4_step(f, u[k], k*dt, dt)
 
     return u, np.arange(n+1)*dt

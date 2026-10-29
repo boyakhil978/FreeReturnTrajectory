@@ -67,3 +67,39 @@ def test_state_from_inertial_rotate_keeps_earth_relative_orbit():
     assert np.isclose(earth_dist(u0), np.linalg.norm(r))
     assert np.isclose(speed, np.linalg.norm(v))
     assert np.isclose(fpa, np.degrees(np.arcsin(r @ v / (np.linalg.norm(r)*np.linalg.norm(v)))))
+
+def test_time_unit_is_consistent_with_masses():
+    # the nondimensional equations assume G (m_E + m_M) T^2 / L^3 = 1
+    from freereturn.constants import G, M_EARTH, M_MOON, L, T
+    assert np.isclose(G*(M_EARTH + M_MOON)*T**2/L**3, 1.0, rtol=1e-12)
+
+def test_tli_state_is_a_tangential_burn():
+    from freereturn.trajectory import tli_state, circular_speed
+
+    u0 = tli_state(3.14, 4.12)
+    speed, fpa = inertial_speed_fpa(u0)
+
+    assert np.isclose(earth_dist(u0), R_0)
+    assert np.isclose(speed, circular_speed(R_0) + 3.14)
+    assert np.isclose(fpa, 0.0, atol=1e-12)
+
+def test_apply_burn_adds_speed_along_velocity():
+    from freereturn.trajectory import apply_burn
+
+    u0 = initial_state(R_0, 10.8, 7.9, 4.2)
+    speed, fpa = inertial_speed_fpa(apply_burn(u0, 0.002))
+
+    assert np.isclose(speed, 10.802)
+    assert np.isclose(fpa, 7.9)
+
+def test_entry_is_located_on_the_interface():
+    from freereturn.constants import R_EI
+    from freereturn.entry import fly_to_entry
+    from freereturn.trajectory import tli_state
+
+    # a coarse step is enough to check the event location; the nominal TLI enters near -6.5 deg
+    res = fly_to_entry(tli_state(3.1440298863910137, 4.12), 2/2**13)
+
+    assert res['status'] == 'entry'
+    assert np.isclose(earth_dist(res['u_ei']), R_EI, atol=1e-8)
+    assert -8 < res['gamma_ei'] < -5
