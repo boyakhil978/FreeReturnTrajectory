@@ -38,3 +38,32 @@ def test_initial_state_round_trip():
     assert np.isclose(earth_dist(u0), R_0)
     assert np.isclose(speed, 10.8)
     assert np.isclose(fpa, 7.9)
+
+def test_jacobi_constant_matches_jpl_catalog_and_is_conserved():
+    from freereturn.dynamics import jacobi_constant
+    from freereturn.jpl import periodic_orbits
+
+    system, orbits = periodic_orbits('dro', periodmin=3.1554, periodmax=3.1556)
+    mu, orbit = system['mu'], orbits[0]
+    u0 = orbit[[0, 1, 3, 4]]
+
+    u, times = rk4(lambda u, t: f_spacecraft(u, t, mu), u0, orbit[7], orbit[7]/2**12)
+
+    assert np.isclose(jacobi_constant(u0, mu), orbit[6], atol=1e-12)
+    assert np.abs(jacobi_constant(u, mu) - orbit[6]).max() < 1e-10
+    assert np.linalg.norm(u[-1] - u0) < 1e-9 # the catalogued orbit closes after one period
+
+def test_state_from_inertial_rotate_keeps_earth_relative_orbit():
+    from freereturn.trajectory import state_from_inertial
+
+    r_moon, v_moon = np.array([384400.0, 0, 0]), np.array([0, 1.0, 0])
+    # 20 deg out of the Moon's plane, descending toward Earth
+    r = 100000*np.array([0.3, 0.9*np.cos(0.35), 0.9*np.sin(0.35)])
+    v = np.array([-1.2, -0.5, 0.2])
+
+    u0 = state_from_inertial(r, v, r_moon, v_moon, method='rotate')
+    speed, fpa = inertial_speed_fpa(u0)
+
+    assert np.isclose(earth_dist(u0), np.linalg.norm(r))
+    assert np.isclose(speed, np.linalg.norm(v))
+    assert np.isclose(fpa, np.degrees(np.arcsin(r @ v / (np.linalg.norm(r)*np.linalg.norm(v)))))
