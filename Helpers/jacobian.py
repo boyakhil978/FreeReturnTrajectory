@@ -1,4 +1,6 @@
-def jacobian(mu, u):
+import numpy as np
+
+def jacobian(u, mu):
     '''Jacobian of f with respect to u, evaluated at u.
     
     Returns
