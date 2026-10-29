@@ -8,8 +8,6 @@ def rk4(f, u_start, t_end, dt):
     u : ndarray, shape (n + 1, len(u_start)); row k is the state at t_k
     times : ndarray, the n + 1 times t_k
     '''
-    ### YOUR CODE HERE ###
-
     n = int(round(t_end / dt))
     u = np.empty(((n+1), np.size(u_start)))
     u[0] = u_start
