@@ -31,6 +31,17 @@ def f_spacecraft(u, t, mu=MU):
         (1 - (1 - mu)/(r1**3) - mu/r2**3)*u[1] - 2*u[2]
     ])
 
+def jacobi_constant(u, mu=MU):
+    '''C = 2*Omega - (v_x^2 + v_y^2), conserved along any coasting arc. Works on one state or an array of states.'''
+    x, y, vx, vy = u[..., 0], u[..., 1], u[..., 2], u[..., 3]
+
+    r1 = np.sqrt((x + mu)**2 + y**2)
+    r2 = np.sqrt((x - 1 + mu)**2 + y**2)
+
+    omega = 0.5*(x**2 + y**2) + (1 - mu)/r1 + mu/r2
+
+    return 2*omega - (vx**2 + vy**2)
+
 def jacobian(u, mu=MU):
     '''Jacobian of f with respect to u, evaluated at u.
 
