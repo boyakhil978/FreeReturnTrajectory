@@ -59,7 +59,7 @@ python -m pytest
 
 ## Reproducing the report figures
 
-Run from the repository root, in this order (about 4 minutes in total):
+Run from the repository root, in this order (about 25 minutes in total):
 
 ```sh
 python scripts/retarget_nominal.py            # results/nominal.json (run first)
@@ -69,6 +69,8 @@ python scripts/verify_jpl_orbits.py           # figures/verify_jpl_orbits.pdf
 python scripts/verify_jacobi.py               # figures/verify_jacobi.pdf
 python scripts/select_dt.py                   # figures/select_dt.pdf
 python scripts/stiffness_along_trajectory.py  # figures/stiffness_along_trajectory.pdf
+python scripts/study_q1.py                    # figures/q1_sensitivity.pdf, results/q1.json (about 10 minutes)
+python scripts/study_q2.py                    # figures/q2_correction_cost.pdf, results/q2.json (parallel, about 8 minutes)
 ```
 
 | Check | What it tests | Result |

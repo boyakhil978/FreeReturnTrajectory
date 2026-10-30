@@ -10,7 +10,7 @@ from freereturn.dynamics import f_spacecraft
 from freereturn.integrators import rk4_step
 from freereturn.trajectory import tli_state, apply_burn, locate_entry, inertial_speed_fpa
 
-def fly_to_entry(u0, dt, t_max=3.0, t_c=None, dv_c=0.0, flyby_radius=0.1, store=False):
+def fly_to_entry(u0, dt, t_max=3.0, t_c=None, dv_c=0.0, flyby_radius=0.1, store=False, t0=0.0, passed_moon=False):
     '''March from u0 until the first entry-interface crossing after the lunar flyby.
 
     dt, t_max : nondimensional time step and give-up time (3 time units is about 13 days)
@@ -18,6 +18,8 @@ def fly_to_entry(u0, dt, t_max=3.0, t_c=None, dv_c=0.0, flyby_radius=0.1, store=
                 velocity, applied at the step whose time is nearest t_c
     flyby_radius : the spacecraft counts as having flown past the Moon once it is this close
                    (nondimensional; 0.1 is about 38,000 km)
+    t0, passed_moon : time of u0 and whether the flyby has already happened, so a run can be
+                      restarted part-way along a stored trajectory (t_max is still measured from 0)
 
     Returns a dict with
         status : 'entry', 'lunar impact' or 'no return'
@@ -26,17 +28,16 @@ def fly_to_entry(u0, dt, t_max=3.0, t_c=None, dv_c=0.0, flyby_radius=0.1, store=
         u, times : full history, only if store=True
     '''
     f = lambda u, t: f_spacecraft(u, t, MU)
-    n_max = int(round(t_max/dt))
-    k_c = None if t_c is None else int(round(t_c/dt))
+    n_max = int(round((t_max - t0)/dt))
+    k_c = None if t_c is None else int(round((t_c - t0)/dt))
 
     u = np.array(u0, dtype=float)
-    passed_moon = False
-    r2_min, t_r2_min = np.inf, 0.0
+    r2_min, t_r2_min = np.inf, t0
     hist = [u.copy()] if store else None
     out = {'status': 'no return'}
 
     for k in range(n_max):
-        t = k*dt
+        t = t0 + k*dt
         if k == k_c:
             u = apply_burn(u, dv_c)
 
@@ -67,7 +68,7 @@ def fly_to_entry(u0, dt, t_max=3.0, t_c=None, dv_c=0.0, flyby_radius=0.1, store=
     out['t_perilune'] = t_r2_min
     if store:
         out['u'] = np.array(hist)
-        out['times'] = np.arange(len(hist))*dt
+        out['times'] = t0 + np.arange(len(hist))*dt
         if out['status'] == 'entry':
             out['times'][-1] = out['t_ei']
     return out

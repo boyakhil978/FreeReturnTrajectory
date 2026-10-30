@@ -1,0 +1,658 @@
+{
+  "uncorrected_gamma": {
+    "1.0": -39.1131237752954,
+    "-1.0": "no return"
+  },
+  "t_perilune_days": 3.7730171588038206,
+  "t_ei_days": 7.557376686634125,
+  "corrections": [
+    {
+      "error_ms": 1.0,
+      "t_c_days": 0.1,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 4.024075789318998,
+      "dv_c_ms": -2.6491015884057485,
+      "gamma_ei": -6.520000018238636
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 0.1,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 4.024075789318998,
+      "dv_c_ms": -94.78163895670212,
+      "gamma_ei": -6.51999988318422
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 0.4764705882352941,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 2.0919796830966746,
+      "dv_c_ms": -5.049465709723267,
+      "gamma_ei": -6.520000009436224
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 0.4764705882352941,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 2.0919796830966746,
+      "dv_c_ms": -88.8176096806202,
+      "gamma_ei": -6.519999999904693
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 0.8529411764705882,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 1.5753546953789905,
+      "dv_c_ms": -6.759528371701866,
+      "gamma_ei": -6.520000001311891
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 0.8529411764705882,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 1.5753546953789905,
+      "dv_c_ms": 86.6039377310723,
+      "gamma_ei": -6.52000001389471
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 1.2294117647058824,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 1.2830480820158583,
+      "dv_c_ms": -8.465297578171777,
+      "gamma_ei": -6.5200000081795135
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 1.2294117647058824,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 1.2830480820158583,
+      "dv_c_ms": 66.66811640087721,
+      "gamma_ei": -6.519999964296944
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 1.6058823529411765,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 1.0798247402648251,
+      "dv_c_ms": -10.398864120317635,
+      "gamma_ei": -6.519998901519361
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 1.6058823529411765,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 1.0798247402648251,
+      "dv_c_ms": 54.33157536807435,
+      "gamma_ei": -6.5200000003091425
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 1.9823529411764707,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 0.9233541720442493,
+      "dv_c_ms": -12.79839299496921,
+      "gamma_ei": -6.520000013906425
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 1.9823529411764707,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 0.9233541720442493,
+      "dv_c_ms": 46.019889673338,
+      "gamma_ei": -6.520000000095454
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 2.3588235294117648,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 0.7951373091719147,
+      "dv_c_ms": -16.039412639672634,
+      "gamma_ei": -6.519998730164635
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 2.3588235294117648,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 0.7951373091719147,
+      "dv_c_ms": 40.254420174120895,
+      "gamma_ei": -6.519999999966671
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 2.735294117647059,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 0.6853011720311062,
+      "dv_c_ms": -20.83717260941763,
+      "gamma_ei": -6.5200000285122295
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 2.735294117647059,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 0.6853011720311062,
+      "dv_c_ms": 36.25854186466131,
+      "gamma_ei": -6.519999504461337
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 3.111764705882353,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 0.5867510772498585,
+      "dv_c_ms": -28.62863428297675,
+      "gamma_ei": -6.520000779766241
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 3.111764705882353,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 0.5867510772498585,
+      "dv_c_ms": 33.59275655753894,
+      "gamma_ei": -6.519999999843614
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 3.488235294117647,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 0.48496621656041833,
+      "dv_c_ms": -38.64251875267527,
+      "gamma_ei": -6.519999999975736
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 3.488235294117647,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 0.48496621656041833,
+      "dv_c_ms": 32.469625467859544,
+      "gamma_ei": -6.52000000012707
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 3.864705882352941,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 0.2714914275286202,
+      "dv_c_ms": -47.39964237047521,
+      "gamma_ei": -6.520000000050667
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 3.864705882352941,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 0.2714914275286202,
+      "dv_c_ms": -37.50049987136212,
+      "gamma_ei": -6.520000343095553
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 4.241176470588234,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 0.39600502237050117,
+      "dv_c_ms": 373.19583645836434,
+      "gamma_ei": -6.519999999983693
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 4.241176470588234,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 0.39600502237050117,
+      "dv_c_ms": -37.77704299529083,
+      "gamma_ei": -6.520000077532322
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 4.617647058823529,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 0.49400884725298577,
+      "dv_c_ms": 213.8799385812946,
+      "gamma_ei": -6.520000000022324
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 4.617647058823529,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 0.49400884725298577,
+      "dv_c_ms": -41.51916499299478,
+      "gamma_ei": -6.520000000016141
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 4.9941176470588236,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 0.5937608116920037,
+      "dv_c_ms": 210.59126879647397,
+      "gamma_ei": -6.5200000000058775
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 4.9941176470588236,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 0.5937608116920037,
+      "dv_c_ms": -44.411536774362965,
+      "gamma_ei": -6.520000000042675
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 5.370588235294117,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 0.703120560889252,
+      "dv_c_ms": 227.13082984142792,
+      "gamma_ei": -6.520000006788628
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 5.370588235294117,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 0.703120560889252,
+      "dv_c_ms": -47.51857053781423,
+      "gamma_ei": -6.520000000027084
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 5.747058823529411,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 0.8278938132435664,
+      "dv_c_ms": 253.74498253242962,
+      "gamma_ei": -6.519999999992576
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 5.747058823529411,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 0.8278938132435664,
+      "dv_c_ms": -51.42373746759216,
+      "gamma_ei": -6.520000000386428
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 6.123529411764705,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 0.9761941561818573,
+      "dv_c_ms": 290.04435130901976,
+      "gamma_ei": -6.520000000000642
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 6.123529411764705,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 0.9761941561818573,
+      "dv_c_ms": -56.77219012126891,
+      "gamma_ei": -6.5200000001378156
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 6.5,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 1.1623027835514066,
+      "dv_c_ms": 339.5075174968714,
+      "gamma_ei": -6.520000000006247
+    },
+    {
+      "error_ms": 1.0,
+      "t_c_days": 6.5,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 1.1623027835514066,
+      "dv_c_ms": -64.68610372434436,
+      "gamma_ei": -6.519999999990807
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 0.1,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 4.020204706287088,
+      "dv_c_ms": 2.6507818249557005,
+      "gamma_ei": -6.519996566680101
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 0.1,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 4.020204706287088,
+      "dv_c_ms": 109.23074273876554,
+      "gamma_ei": -6.519999999373732
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 0.4764705882352941,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 2.0843491363994513,
+      "dv_c_ms": 5.062120663430062,
+      "gamma_ei": -6.520000000245878
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 0.4764705882352941,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 2.0843491363994513,
+      "dv_c_ms": null,
+      "gamma_ei": null
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 0.8529411764705882,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 1.5654921154460302,
+      "dv_c_ms": 6.785020108262387,
+      "gamma_ei": -6.52000171630233
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 0.8529411764705882,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 1.5654921154460302,
+      "dv_c_ms": null,
+      "gamma_ei": null
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 1.2294117647058824,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 1.2713400127825283,
+      "dv_c_ms": 8.503749284501158,
+      "gamma_ei": -6.520000112628907
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 1.2294117647058824,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 1.2713400127825283,
+      "dv_c_ms": null,
+      "gamma_ei": null
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 1.6058823529411765,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 1.066442220076693,
+      "dv_c_ms": 10.44773053741405,
+      "gamma_ei": -6.519999999579817
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 1.6058823529411765,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 1.066442220076693,
+      "dv_c_ms": null,
+      "gamma_ei": null
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 1.9823529411764707,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 0.9083879835538904,
+      "dv_c_ms": 12.849459616301413,
+      "gamma_ei": -6.5199993846769155
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 1.9823529411764707,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 0.9083879835538904,
+      "dv_c_ms": null,
+      "gamma_ei": null
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 2.3588235294117648,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 0.7786547732717228,
+      "dv_c_ms": 16.070948518603345,
+      "gamma_ei": -6.520000287186022
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 2.3588235294117648,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 0.7786547732717228,
+      "dv_c_ms": -79.02114544298747,
+      "gamma_ei": -6.519999999517774
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 2.735294117647059,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 0.667430855046768,
+      "dv_c_ms": 20.794081174571087,
+      "gamma_ei": -6.520000035895823
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 2.735294117647059,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 0.667430855046768,
+      "dv_c_ms": -59.4232724743459,
+      "gamma_ei": -6.519999741181588
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 3.111764705882353,
+      "direction": "along",
+      "after_flyby": false,
+      "speed_kms": 0.5681114645251695,
+      "dv_c_ms": 28.418010379584977,
+      "gamma_ei": -6.5200011459674485
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 3.111764705882353,
+      "direction": "normal",
+      "after_flyby": false,
+      "speed_kms": 0.5681114645251695,
+      "dv_c_ms": -51.87789894256507,
+      "gamma_ei": -6.5199999997897935
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 3.488235294117647,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 0.4725352243295395,
+      "dv_c_ms": 39.982026376227864,
+      "gamma_ei": -6.520000000018581
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 3.488235294117647,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 0.4725352243295395,
+      "dv_c_ms": -51.45580292765265,
+      "gamma_ei": -6.519999999989894
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 3.864705882352941,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 0.5776247162431756,
+      "dv_c_ms": 133.49732401831668,
+      "gamma_ei": -6.520000000123824
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 3.864705882352941,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 0.5776247162431756,
+      "dv_c_ms": 53.03721499315874,
+      "gamma_ei": -6.520000000012174
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 4.241176470588234,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 0.6812626186755005,
+      "dv_c_ms": -312.2328674217633,
+      "gamma_ei": -6.519999999966385
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 4.241176470588234,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 0.6812626186755005,
+      "dv_c_ms": 70.41824808094236,
+      "gamma_ei": -6.52000000000011
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 4.617647058823529,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 0.7743332897573675,
+      "dv_c_ms": -258.1824263517718,
+      "gamma_ei": -6.519999999996981
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 4.617647058823529,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 0.7743332897573675,
+      "dv_c_ms": 78.75554069995198,
+      "gamma_ei": -6.520000020873461
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 4.9941176470588236,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 0.8822802102725271,
+      "dv_c_ms": -265.51176947606604,
+      "gamma_ei": -6.520000000756567
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 4.9941176470588236,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 0.8822802102725271,
+      "dv_c_ms": 86.17224372751461,
+      "gamma_ei": -6.519999999988971
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 5.370588235294117,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 1.0117317624054412,
+      "dv_c_ms": -289.9897243610578,
+      "gamma_ei": -6.519999999997406
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 5.370588235294117,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 1.0117317624054412,
+      "dv_c_ms": 95.13539608709716,
+      "gamma_ei": -6.520000000239059
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 5.747058823529411,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 1.1737356150231313,
+      "dv_c_ms": -327.93758534312616,
+      "gamma_ei": -6.520000008077769
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 5.747058823529411,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 1.1737356150231313,
+      "dv_c_ms": 107.64366862597191,
+      "gamma_ei": -6.520000022878708
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 6.123529411764705,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 1.3904892614002617,
+      "dv_c_ms": -383.77349175177363,
+      "gamma_ei": -6.52000000002212
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 6.123529411764705,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 1.3904892614002617,
+      "dv_c_ms": 127.22830209978395,
+      "gamma_ei": -6.520000000017716
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 6.5,
+      "direction": "along",
+      "after_flyby": true,
+      "speed_kms": 1.7162520867398567,
+      "dv_c_ms": -472.6124000936623,
+      "gamma_ei": -6.520000045198909
+    },
+    {
+      "error_ms": -1.0,
+      "t_c_days": 6.5,
+      "direction": "normal",
+      "after_flyby": true,
+      "speed_kms": 1.7162520867398567,
+      "dv_c_ms": 163.30510585366636,
+      "gamma_ei": -6.51999999999964
+    }
+  ]
+}

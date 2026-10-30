@@ -128,7 +128,7 @@ v_c &= \sqrt{\frac{1-\mu}{r_0}} + \frac{\Delta v}{V}, \\
 v_{x,0} &= -v_c \sin\varphi + y_0, \qquad v_{y,0} = v_c\cos\varphi - (x_0+\mu).
 \end{aligned}
 \end{equation}
-The final line converts the inertial velocity to the rotating frame via $\mathbf{v}_{\mathrm{rot}} = \mathbf{v}_{\mathrm{in}} - \boldsymbol{\omega}\times\mathbf{r}$, including Earth's motion about the barycenter. Burn \emph{timing} maps to $\varphi$: a timing error $\delta t$ shifts the burn location by $\delta\varphi = n_{\mathrm{LEO}}\,\delta t$, where $n_{\mathrm{LEO}} = \sqrt{(1-\mu)/r_0^3}$ is the parking-orbit angular rate.
+The final line converts the inertial velocity to the rotating frame via $\mathbf{v}_{\mathrm{rot}} = \mathbf{v}_{\mathrm{in}} - \boldsymbol{\omega}\times\mathbf{r}$, including Earth's motion about the barycenter. Burn \emph{timing} maps to $\varphi$: the parking orbit turns at $n_{\mathrm{LEO}} = \sqrt{(1-\mu)/r_0^3} = 445.5$ inertially while the frame turns at unit rate, so a timing error $\delta t$ shifts the burn location by $\delta\varphi = (n_{\mathrm{LEO}} - 1)\,\delta t$.
 
 \paragraph{Nominal trajectory and parameters.} The nominal free return is found numerically. A scan over $\Delta v$ and $\varphi$ locates a free-return family near $\varphi = 4.12$\,rad; holding $\varphi$ fixed, bisection on $\Delta v$ (\texttt{scripts/retarget\_nominal.py}) gives $\Delta v = 3.144030$\,km/s, for which $\gEI = -6.520^\circ$. Just below this value the return skips past the atmosphere (at $\Delta v = 3.1440$\,km/s the vacuum perigee is $147$\,km), and $0.5$\,m/s above it the entry is already $-28.7^\circ$. The nominal passes $6{,}947$\,km above the lunar surface $3.77$ days after TLI and reaches entry interface $7.56$ days after TLI at $10.99$\,km/s, the same as Orion's measured entry speed on Artemis~I~\cite{rea_artemis1}. Table~\ref{tab:params} lists the parameters the investigation varies and the quantities it measures.
 
@@ -142,10 +142,10 @@ The final line converts the inertial velocity to the rotating frame via $\mathbf
 Parameter & Symbol & Nominal / range & Question \\
 \midrule
 TLI magnitude error & $\delta(\Delta v)$ & $0$; swept over $\pm 20$ mm/s & Q1a \\
-TLI timing error & $\delta t$ ($\delta\varphi = n_{\mathrm{LEO}}\delta t$) & $0$; swept over $\pm 2$ s & Q1b \\
+TLI timing error & $\delta t$ ($\delta\varphi = (n_{\mathrm{LEO}}-1)\delta t$) & $0$; swept over $\pm 2$ s & Q1b \\
 Injection error to be corrected & $\delta(\Delta v)$ & e.g.\ $\pm 1$ m/s & Q2 \\
 Correction time & $t_c$ & 15--20 values, TLI to $\approx$1 day before EI & Q2 \\
-Correction magnitude & $\Delta v_c$ & solved for, along $\vE/|\vE|$ & Q2 \\
+Correction magnitude & $\Delta v_c$ & solved for, along or normal to $\vE$ & Q2 \\
 \midrule
 \multicolumn{4}{@{}l}{\emph{Held fixed:} $\mu$, $r_0$, $r_{\mathrm{EI}}$, nominal $\Delta v$ and $\varphi$, corridor $[-7.4^\circ, -5.25^\circ]$, target $-6.52^\circ$} \\
 \multicolumn{4}{@{}l}{\emph{Measured:} $\gEI$ (primary); perilune altitude, time of flight, $\Delta v_c$} \\
@@ -195,7 +195,24 @@ We advance Eq.~\eqref{eq:cr3bp} with the classical fourth-order Runge--Kutta met
 
 \subsection{Error and stability properties}
 
-\paragraph{Truncation error.} RK4 has local truncation error $O(\Delta t^5)$ and global error $O(\Delta t^4)$. \todo{derive in the language of Lectures 10--11: Taylor-expand Eq.~\eqref{eq:rk4} and match terms through $\Delta t^4$.}
+\paragraph{Truncation error.} We show the derivation for a scalar autonomous equation $\dot u = f(u)$; for systems the same matching holds term by term with $f'$ the Jacobian. Write $h = \Delta t$ and evaluate $f$ and its derivatives at $u_k$. Differentiating $\dot u = f(u)$ repeatedly ($\ddot u = f'f$, $\dddot u = f''f^2 + f'^2 f$, \dots) and Taylor-expanding the exact solution gives
+\begin{equation}
+\label{eq:taylor_exact}
+\begin{aligned}
+u(t_k + h) = u_k + hf + \frac{h^2}{2}f'f &+ \frac{h^3}{6}\left(f''f^2 + f'^2 f\right) \\
+&+ \frac{h^4}{24}\left(f'''f^3 + 4f''f'f^2 + f'^3 f\right) + O(h^5).
+\end{aligned}
+\end{equation}
+Expanding each stage of Eq.~\eqref{eq:rk4} about $u_k$, with each stage's argument substituted into the next:
+\begin{equation}
+\begin{aligned}
+\mathbf{k}_1 &= f, \\
+\mathbf{k}_2 &= f + \tfrac{h}{2}f'f + \tfrac{h^2}{8}f''f^2 + \tfrac{h^3}{48}f'''f^3 + O(h^4), \\
+\mathbf{k}_3 &= f + \tfrac{h}{2}f'f + h^2\left(\tfrac14 f'^2 f + \tfrac18 f''f^2\right) \\ &\quad + h^3\left(\tfrac{3}{16}f''f'f^2 + \tfrac{1}{48}f'''f^3\right) + O(h^4), \\
+\mathbf{k}_4 &= f + hf'f + h^2\left(\tfrac12 f'^2 f + \tfrac12 f''f^2\right) \\ &\quad + h^3\left(\tfrac14 f'^3 f + \tfrac58 f''f'f^2 + \tfrac16 f'''f^3\right) + O(h^4).
+\end{aligned}
+\end{equation}
+Forming $u_k + \tfrac{h}{6}(\mathbf{k}_1 + 2\mathbf{k}_2 + 2\mathbf{k}_3 + \mathbf{k}_4)$, the coefficients are $\tfrac{6}{6} = 1$ for $hf$; $\tfrac{1}{6}(1 + 1 + 1) = \tfrac12$ for $h^2 f'f$; $\tfrac16(\tfrac14 + \tfrac14 + \tfrac12) = \tfrac16$ for both $h^3 f''f^2$ and $h^3 f'^2 f$; and $\tfrac16(\tfrac1{24} + \tfrac1{24} + \tfrac16) = \tfrac1{24}$, $\tfrac16(\tfrac38 + \tfrac58) = \tfrac4{24}$ and $\tfrac16\cdot\tfrac14 = \tfrac1{24}$ for the three $h^4$ terms. Every term of Eq.~\eqref{eq:taylor_exact} is matched (we also confirmed this symbolically), so the local truncation error is $O(h^5)$. Over $N = t_f/h$ steps these local errors accumulate, and with $\bff$ Lipschitz the global error at a fixed $t_f$ is $N \cdot O(h^5) = O(h^4)$.
 
 \paragraph{Absolute stability.} Applying Eq.~\eqref{eq:rk4} to the test equation $\dot u = \lambda u$ gives $u_{k+1} = R(w)\,u_k$ with $w = \lambda\Delta t$ and
 \begin{equation}
@@ -232,7 +249,7 @@ so $|R(iy)| \le 1$ if and only if $y^2 \le 8$, i.e.\ $|y| \le 2\sqrt{2} \approx 
   \item Evaluate $\mathbf{k}_1,\dots,\mathbf{k}_4$ from $\bu_k$ and form $\bu_{k+1}$ via Eq.~\eqref{eq:rk4}.
   \item \textbf{Entry-interface event.} If, after the flyby, $|\rE| - r_{\mathrm{EI}}$ changes sign between $\bu_k$ and $\bu_{k+1}$, find $\tau \in (0, \Delta t)$ by root-finding (Brent's method) such that a single RK4 step of length $\tau$ from $\bu_k$ lands exactly on $|\rE| = r_{\mathrm{EI}}$, then evaluate Eq.~\eqref{eq:gamma}. Locating the event with an RK4 step preserves $O(\Delta t^4)$ accuracy; taking the minimum over sampled steps would introduce an $O(\Delta t^2)$ error.
   \item \textbf{Lunar impact.} If $r_2 < R_M$, flag the run and stop.
-  \item \textbf{Midcourse correction.} At the step $k$ with $t_k$ nearest $t_c$, add $\Delta v_c$ along $\vE/|\vE|$ to the velocity components of $\bu_k$ before stepping. The position is unchanged, so the same vector is added to the rotating-frame velocity.
+  \item \textbf{Midcourse correction.} At the step $k$ with $t_k$ nearest $t_c$, add $\Delta v_c$ along $\vE/|\vE|$ (or along the in-plane normal to it) to the velocity components of $\bu_k$ before stepping. The position is unchanged, so the same vector is added to the rotating-frame velocity.
 \end{enumerate}
 
 \subsection{Targeting}
@@ -321,29 +338,79 @@ The time step must make the numerical error in $\gEI$ negligible compared with b
 \label{sec:results}
 % =====================================================================
 
-\subsection{Procedure}
+All results use the nominal of Section~\ref{sec:premise} ($\Delta v = 3.144030$\,km/s, $\varphi = 4.12$\,rad, $\gEI = -6.520^\circ$; Figure~\ref{fig:geometry}a) and the study time step $\Delta t = 3.05\times10^{-5}$ selected in Section~\ref{sec:verification}. They are produced by \texttt{scripts/study\_q1.py} and \texttt{scripts/study\_q2.py}.
 
-\begin{enumerate}[leftmargin=2em]
-  \item \textbf{Nominal.} Retarget the free return to $\gEI = -6.52^\circ$; report $\Delta v$, $\varphi$, perilune altitude, time of flight, and $C$.
-  \item \textbf{Q1a.} Sweep $\delta(\Delta v)$ over $\pm 20$\,mm/s with $\varphi$ fixed; record $\gEI$ (or impact/no return).
-  \item \textbf{Q1b.} Sweep $\delta t$ over $\pm 2$\,s with $\Delta v$ fixed; record $\gEI$.
-  \item \textbf{Q1 tolerances.} Root-find the $\delta(\Delta v)$ and $\delta t$ at which $\gEI$ reaches $-5.25^\circ$ and $-7.4^\circ$, including any shallow/steep asymmetry.
-  \item \textbf{Q2.} For representative injection errors well outside the corridor (e.g.\ $\delta(\Delta v) = \pm 1$\,m/s), solve for the $\Delta v_c$ restoring $\gEI = -6.52^\circ$ at 15--20 correction times $t_c$ between shortly after TLI and about one day before entry.
-\end{enumerate}
+\subsection{Q1: How accurate must the TLI burn be?}
 
-\subsection{Planned figures}
+\paragraph{Procedure.} For Q1a we vary the TLI magnitude by $\delta(\Delta v) \in [-20, 20]$\,mm/s with $\varphi$ fixed; for Q1b we hold $\Delta v$ and start the burn $\delta t \in [-2, 2]$\,s late, so $\delta\varphi = (n_{\mathrm{LEO}} - 1)\,\delta t$. Each sweep uses 81 runs. The corridor edges are then located by Brent's method on $\gEI(\delta) = -5.25^\circ$ and $\gEI(\delta) = -7.4^\circ$, with runs that skip out of the atmosphere counted as $\gEI = 0$.
 
-\begin{itemize}[leftmargin=2em]
-  \item Nominal free-return trajectory in the rotating frame, with perilune and entry interface marked (context). \todo{}
-  \item $\gEI$ vs.\ $\delta(\Delta v)$, corridor shaded (answers Q1a). \todo{}
-  \item $\gEI$ vs.\ $\delta t$, corridor shaded (answers Q1b). \todo{}
-  \item Table of allowable TLI magnitude and timing errors (answers Q1). \todo{}
-  \item $\Delta v_c$ vs.\ $t_c$ for each injection error, lunar closest approach marked (answers Q2). \todo{}
-\end{itemize}
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/q1_sensitivity.pdf}
+\caption{Entry flight-path angle against (a) TLI magnitude error and (b) TLI timing error. Green: entry corridor $[-7.4^\circ, -5.25^\circ]$; grey: the range of errors that stays inside it. Crosses mark early burns whose return misses the atmosphere entirely.}
+\label{fig:q1}
+\end{figure}
+
+\paragraph{Results.} Figure~\ref{fig:q1} shows that a larger or later burn steepens the entry. Near the nominal the sensitivities are
+\begin{equation}
+\frac{\partial\gEI}{\partial(\Delta v)} = -0.1405^\circ \text{ per mm/s}, \qquad
+\frac{\partial\gEI}{\partial t_{\mathrm{burn}}} = -5.71^\circ \text{ per s}.
+\end{equation}
+A 20\,mm/s error, about six parts per million of the burn, already moves $\gEI$ from $-6.52^\circ$ to $-2.4^\circ$ or $-8.9^\circ$. The response to timing is stronger and more nonlinear: a burn $0.6$\,s early returns with a vacuum perigee above entry interface and skips out, while a burn 2\,s late enters at $-13.5^\circ$. Table~\ref{tab:q1} gives the largest errors that keep $\gEI$ in the corridor.
+
+\begin{table}[h]
+\centering
+\caption{Largest TLI errors that keep the entry inside the corridor.}
+\label{tab:q1}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Error & Shallow edge ($-5.25^\circ$) & Steep edge ($-7.4^\circ$) & Total window \\
+\midrule
+Magnitude $\delta(\Delta v)$ & $-8.14$\,mm/s & $+6.69$\,mm/s & $14.8$\,mm/s ($4.7$\,ppm of $\Delta v$) \\
+Timing $\delta t$ & $-0.200$\,s & $+0.165$\,s & $0.365$\,s \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Interpretation.} Both windows are asymmetric, wider on the shallow (under-burn, early) side, because $\gEI$ curves toward $0^\circ$ as the vacuum perigee rises toward the entry interface. The answer to Q1 is that an open-loop TLI must be accurate to within $-8.1/{+6.7}$\,mm/s in magnitude and $-0.20/{+0.17}$\,s in timing, millimetres per second and fractions of a second as we hypothesized. That is far tighter than an open-loop burn of more than 3\,km/s can be expected to deliver, so a free return is therefore only abort-safe in practice if it is followed by midcourse corrections, which motivates Q2.
+
+\subsection{Q2: What does correcting an injection error cost?}
+
+\paragraph{Procedure.} We apply injection errors of $\delta(\Delta v) = +1$\,m/s, which enters at $-39.1^\circ$ uncorrected, and $-1$\,m/s, which never returns. Both are far outside the corridor. Each erroneous trajectory is marched once and stored. At 18 correction times $t_c$ from 0.1 to 6.5 days after TLI, the run restarts from the stored state, applies an impulsive burn $\Delta v_c$, and continues to entry interface. $\Delta v_c$ is the smallest-magnitude root of $\gEI(\Delta v_c) = -6.52^\circ$, found by expanding a bracket from zero and refining with Brent's method. The plan in Table~\ref{tab:params} fixes the burn along $\vE$. Because that direction turns out to be a poor choice after the flyby, we also solve for an in-plane burn \emph{normal} to $\vE$, and we take the cheaper of the two as an upper bound on the optimal single-burn cost.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.75\textwidth]{figures/q2_correction_cost.pdf}
+\caption{Midcourse correction needed to restore $\gEI = -6.52^\circ$ after a $\pm 1$\,m/s TLI error, against the time of the correction, for burns along and normal to the Earth-relative velocity $\vE$. The grey band is the lunar flyby (3.77 days).}
+\label{fig:q2}
+\end{figure}
+
+\paragraph{Results.} Figure~\ref{fig:q2} and Table~\ref{tab:q2} give the results. Until the spacecraft nears the Moon ($t_c \le 3.1$\,days) the along-velocity burn is always the cheaper one, and its cost rises steadily from $2.65$\,m/s at $t_c = 0.1$\,days to about $40$\,m/s at $3.5$\,days. After the flyby the along-velocity burn becomes very expensive (200--470\,m/s from $4.2$\,days on), while the normal burn costs 38--65\,m/s for the $+1$\,m/s error and 53--163\,m/s for $-1$\,m/s, growing as the spacecraft falls back toward Earth.
+
+\begin{table}[h]
+\centering
+\caption{Cheapest single correction (of the two directions) restoring $\gEI = -6.52^\circ$, for a 1\,m/s TLI error.}
+\label{tab:q2}
+\begin{tabular}{@{}lccccccc@{}}
+\toprule
+$t_c$ (days after TLI) & 0.10 & 1.23 & 2.36 & 3.49 & 3.86 & 4.99 & 6.50 \\
+& & & & & (after flyby) & & \\
+\midrule
+TLI $+1$\,m/s: $|\Delta v_c|$ (m/s) & 2.6 & 8.5 & 16.0 & 32.5 & 37.5 & 44.4 & 64.7 \\
+TLI $-1$\,m/s: $|\Delta v_c|$ (m/s) & 2.7 & 8.5 & 16.1 & 40.0 & 53.0 & 86.2 & 163.3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Interpretation.} Before the flyby, the correction is essentially an energy correction. A burn changes the specific energy by $|\vE|\,\Delta v_c$, and the product $|\vE|\,|\Delta v_c|$ stays between $10.6$ and $11.8$ (in km/s times m/s) for the first two days. That matches the energy error the TLI mistake introduced, $10.9 \times 1$ in the same units. The correction grows simply because the spacecraft slows down as it climbs (from $11$\,km/s at TLI to $4.0$\,km/s at 0.1\,days and $0.9$\,km/s at 2\,days). This is the Oberth effect working in reverse. After the flyby the energy relative to Earth is no longer what sets the return: the error has become a displacement of the return perigee, and changing the perigee from far out takes a burn that rotates the velocity, so the normal direction wins and the cost keeps rising as the lever arm shrinks.
+
+The answer to Q2 is therefore that correcting \emph{early} is cheapest by a wide margin. The same 1\,m/s error costs $2.7$\,m/s to correct 2.4 hours after TLI, 14--20 times more just after the flyby (38--53\,m/s), and 24--62 times more one day before entry (65--163\,m/s). This confirms our hypothesis that the cost depends strongly on $t_c$. The flyby does mark a transition, in the best burn direction and in the asymmetry between over- and under-burns, but the cost is already climbing steeply on the way out, not only after the Moon.
 
 \subsection{Scope and limitations}
 
-The corridor is used as a targeting criterion; atmospheric flight, heating, skip dynamics, and entry guidance are outside the model. The planar, circular CR3BP neglects the Moon's inclination and eccentricity, solar gravity, and $J_2$, so absolute values will differ from a real mission; the orders of magnitude of the sensitivities and the trends in correction cost are the transferable results. Burns are impulsive, and magnitude and timing errors are studied separately.
+The corridor is used as a targeting criterion; atmospheric flight, heating, skip dynamics, and entry guidance are outside the model. The planar, circular CR3BP neglects the Moon's inclination and eccentricity, solar gravity, and $J_2$, so absolute values will differ from a real mission; the orders of magnitude of the sensitivities and the trends in correction cost are the transferable results. Burns are impulsive, magnitude and timing errors are studied separately, and Q2 compares two burn directions rather than optimizing over all of them, so its costs are upper bounds on the best single burn.
+
+{\sloppy As a check on how far the absolute numbers transfer, the notebooks \texttt{ApolloComparison.ipynb} and \texttt{ArtemisIIComparison.ipynb} run the same model from the flown post-TLI states of Apollo~8 and Artemis~II (JPL Horizons ephemeris). Once its lunar pass is matched to the real one with a velocity adjustment of 8--14\,m/s, and with the Moon placed at its actual distance for that date, the model reproduces Artemis~II's maximum distance from Earth, entry time and entry speed to within $1\%$. Its entry angle, however, is only reliable when started within the final $\sim$20 hours, because the real flyby tilted the return leg about $20^\circ$ out of the Moon's orbital plane. This is the same extreme sensitivity of $\gEI$ that Q1 quantifies, and it is why real missions plan several midcourse corrections.\par}
 
 % =====================================================================
 \section{Contributions}
@@ -356,11 +423,12 @@ The corridor is used as a targeting criterion; atmospheric flight, heating, skip
 % =====================================================================
 
 All code is available at https://github.com/boyakhil978/FreeReturnTrajectory. The repository separates the numerical method from the studies that use it:
-\begin{itemize}[leftmargin=2em]
+\begin{itemize}[leftmargin=2em]\sloppy
   \item \texttt{freereturn/integrators.py}: the numerical method, \texttt{rk4\_step} and the fixed-step marcher \texttt{u, times = rk4(f, u\_start, t\_end, dt)};
   \item \texttt{freereturn/dynamics.py}: right-hand side $\bff(\bu)$, its Jacobian, and the Jacobi constant $C$;
   \item \texttt{freereturn/trajectory.py}, \texttt{freereturn/entry.py}: TLI initial state, $\gEI$, impulsive burns, and the marcher from TLI to entry interface with event location;
-  \item \texttt{scripts/}: targeting of the nominal, the verification and time-step selection studies, and the results figures;
+  \item \texttt{scripts/}: targeting of the nominal (\texttt{retarget\_nominal.py}), the verification and time-step selection studies (\texttt{verify\_*.py}, \texttt{select\_dt.py}, \texttt{stiffness\_along\_trajectory.py}), and the results (\texttt{study\_q1.py}, \texttt{study\_q2.py}); each writes its figure to \texttt{figures/} and its numbers to \texttt{results/};
+  \item \texttt{ApolloComparison.ipynb}, \texttt{ArtemisIIComparison.ipynb}: comparison of the model with Apollo~8 and Artemis~II flight data (JPL Horizons, cached in \texttt{data/});
   \item \texttt{tests/}: automated checks of the model code (\texttt{python -m pytest});
   \item \texttt{README.md}: instructions to reproduce every figure.
 \end{itemize}
@@ -369,7 +437,13 @@ All code is available at https://github.com/boyakhil978/FreeReturnTrajectory. Th
 \section*{Acknowledgments}
 % =====================================================================
 
-\todo{overview of how generative AI was used: ideation, method selection and justification, implementation and testing, figures and results.}
+Generative AI (Anthropic's Claude, used through Claude Code and the Claude chat interface) was used throughout the project, and every result was checked by the team.
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Ideation and premise.} \todo{team to confirm how AI was used in choosing the premise and finding sources.}
+  \item \textbf{Method selection and justification.} Suggesting the triangular point $L_4$ as an equilibrium at which to evaluate the Jacobian, and using eigenvalue magnitudes for the stiffness ratio (both credited in \texttt{FreeReturnTrajectory.ipynb}); checking the RK4 truncation-error derivation symbolically.
+  \item \textbf{Implementation and testing.} Organizing the code into the \texttt{freereturn} package with automated tests; writing the event location, verification, time-step selection and Q1/Q2 study scripts; retrieving the JPL periodic-orbit and Horizons data and writing the Apollo~8 and Artemis~II comparison notebooks. The RK4 integrator and equations of motion were written by the team, and AI-written code was reviewed and run by the team.
+  \item \textbf{Figures and results.} Generating the figures from the study scripts and drafting and editing report text, including the results discussion; all numbers in the report come from the repository's code.
+\end{itemize}
 
 % =====================================================================
 \begin{thebibliography}{9}
