@@ -75,7 +75,7 @@ python scripts/study_q2.py                    # figures/q2_correction_cost.pdf, 
 
 | Check | What it tests | Result |
 |---|---|---|
-| Exact two-body solution (mu = 0, e = 0.97) | Integrator and rotating-frame terms | Observed order 4.02-4.21 |
+| Exact two-body solution (mu = 0, e = 0.97) | Integrator and rotating-frame terms | Observed order 3.98-4.21 |
 | JPL catalog orbits (DRO, L1 and L2 Lyapunov), one period | Full three-body equations against published data | Observed order 3.87-4.10; Jacobi constant matches the catalog to 14 digits |
 | Jacobi constant along the nominal | Conservation law on the actual trajectory | Drift falls at order 4.03-4.22 |
 | Entry flight-path angle vs dt | Event location keeps fourth order; dt selection | Error 2.3e-4 deg at the study dt, about 60x below the tolerances |

@@ -130,7 +130,7 @@ v_{x,0} &= -v_c \sin\varphi + y_0, \qquad v_{y,0} = v_c\cos\varphi - (x_0+\mu).
 \end{equation}
 The final line converts the inertial velocity to the rotating frame via $\mathbf{v}_{\mathrm{rot}} = \mathbf{v}_{\mathrm{in}} - \boldsymbol{\omega}\times\mathbf{r}$, including Earth's motion about the barycenter. Burn \emph{timing} maps to $\varphi$: the parking orbit turns at $n_{\mathrm{LEO}} = \sqrt{(1-\mu)/r_0^3} = 445.5$ inertially while the frame turns at unit rate, so a timing error $\delta t$ shifts the burn location by $\delta\varphi = (n_{\mathrm{LEO}} - 1)\,\delta t$.
 
-\paragraph{Nominal trajectory and parameters.} The nominal free return is found numerically. A scan over $\Delta v$ and $\varphi$ locates a free-return family near $\varphi = 4.12$\,rad; holding $\varphi$ fixed, bisection on $\Delta v$ (\texttt{scripts/retarget\_nominal.py}) gives $\Delta v = 3.144030$\,km/s, for which $\gEI = -6.520^\circ$. Just below this value the return skips past the atmosphere (at $\Delta v = 3.1440$\,km/s the vacuum perigee is $147$\,km), and $0.5$\,m/s above it the entry is already $-28.7^\circ$. The nominal passes $6{,}947$\,km above the lunar surface $3.77$ days after TLI and reaches entry interface $7.56$ days after TLI at $10.99$\,km/s, the same as Orion's measured entry speed on Artemis~I~\cite{rea_artemis1}. Table~\ref{tab:params} lists the parameters the investigation varies and the quantities it measures.
+\paragraph{Nominal trajectory and parameters.} The nominal free return is found numerically. A scan over $\Delta v$ and $\varphi$ locates a free-return family near $\varphi = 4.12$\,rad; holding $\varphi$ fixed, bisection on $\Delta v$ (\texttt{scripts/retarget\_nominal.py}) gives $\Delta v = 3.144030$\,km/s, for which $\gEI = -6.520^\circ$. Just below this value the return skips past the atmosphere (at $\Delta v = 3.1440$\,km/s the vacuum perigee is $147$\,km), and $0.5$\,m/s above it the entry is already $-29.4^\circ$. The nominal passes $6{,}947$\,km above the lunar surface $3.77$ days after TLI and reaches entry interface $7.56$ days after TLI at $10.99$\,km/s, the same as Orion's measured entry speed on Artemis~I~\cite{rea_artemis1}. Table~\ref{tab:params} lists the parameters the investigation varies and the quantities it measures.
 
 \begin{table}[h]
 \centering
@@ -143,8 +143,8 @@ Parameter & Symbol & Nominal / range & Question \\
 \midrule
 TLI magnitude error & $\delta(\Delta v)$ & $0$; swept over $\pm 20$ mm/s & Q1a \\
 TLI timing error & $\delta t$ ($\delta\varphi = (n_{\mathrm{LEO}}-1)\delta t$) & $0$; swept over $\pm 2$ s & Q1b \\
-Injection error to be corrected & $\delta(\Delta v)$ & e.g.\ $\pm 1$ m/s & Q2 \\
-Correction time & $t_c$ & 15--20 values, TLI to $\approx$1 day before EI & Q2 \\
+Injection error to be corrected & $\delta(\Delta v)$ & $\pm 1$ m/s & Q2 \\
+Correction time & $t_c$ & 18 values, 0.1--6.5 days after TLI & Q2 \\
 Correction magnitude & $\Delta v_c$ & solved for, along or normal to $\vE$ & Q2 \\
 \midrule
 \multicolumn{4}{@{}l}{\emph{Held fixed:} $\mu$, $r_0$, $r_{\mathrm{EI}}$, nominal $\Delta v$ and $\varphi$, corridor $[-7.4^\circ, -5.25^\circ]$, target $-6.52^\circ$} \\
@@ -299,7 +299,7 @@ and is rotated into the CR3BP frame by
 \mathbf{v}_{\mathrm{rot}} = \mathsf{R}(-t)\,\mathbf{v}_{\mathrm{in}} + \begin{bmatrix} y_{\mathrm{rot}} \\ -x_{\mathrm{rot}} \end{bmatrix}, \qquad
 \mathsf{R}(-t) = \begin{bmatrix} \cos t & \sin t \\ -\sin t & \cos t \end{bmatrix},
 \end{equation}
-where the second term in $\mathbf{v}_{\mathrm{rot}}$ comes from differentiating the time-dependent rotation. The integration starts from the exact perigee state $\bu_0 = [\,r_p,\ 0,\ 0,\ v_p - r_p\,]^T$ with $v_p = \sqrt{(1+e)/r_p} = 10.74$ ($11.0$\,km/s), the same speed as TLI and lunar-return entry, and calls the same right-hand-side function used for all results with $\mu = 0$. We measure $\varepsilon(\Delta t) = \|\mathbf{r}_{\mathrm{num}}(t_f) - \mathbf{r}_{\mathrm{exact}}(t_f)\|_2$ at $t_f = P/2$ (apogee) and $t_f = P$ (back at perigee), with $\Delta t = t_f/N$ so that the march lands exactly on $t_f$. Figure~\ref{fig:kepler} shows observed orders $4.02$--$4.21$. At every $\Delta t$ the full-orbit error is about $36\times$ the half-orbit error, because most of the error accumulates during the perigee passage; this is why perigee sets the time step.
+where the second term in $\mathbf{v}_{\mathrm{rot}}$ comes from differentiating the time-dependent rotation. The integration starts from the exact perigee state $\bu_0 = [\,r_p,\ 0,\ 0,\ v_p - r_p\,]^T$ with $v_p = \sqrt{(1+e)/r_p} = 10.74$ ($11.0$\,km/s), the same speed as TLI and lunar-return entry, and calls the same right-hand-side function used for all results with $\mu = 0$. We measure $\varepsilon(\Delta t) = \|\mathbf{r}_{\mathrm{num}}(t_f) - \mathbf{r}_{\mathrm{exact}}(t_f)\|_2$ at $t_f = P/2$ (apogee) and $t_f = P$ (back at perigee), with $\Delta t = t_f/N$ so that the march lands exactly on $t_f$. Figure~\ref{fig:kepler} shows observed orders $3.98$--$4.21$. At every $\Delta t$ the full-orbit error is about $36\times$ the half-orbit error, because most of the error accumulates during the perigee passage; this is why perigee sets the time step.
 
 \begin{figure}[t]
 \centering
@@ -308,9 +308,9 @@ where the second term in $\mathbf{v}_{\mathrm{rot}}$ comes from differentiating 
 \label{fig:kepler}
 \end{figure}
 
-\paragraph{Published periodic orbits.} Because $\mu = 0$ multiplies every Moon term by zero, the two-body test cannot detect a mistake in those terms. We therefore also integrate three planar orbits from JPL's Earth--Moon CR3BP catalog~\cite{jpl_periodic}, each with the catalog's own $\mu = 0.01215058561$: a distant retrograde orbit of Artemis~I's size (period $14.0$ days), and L1 and L2 Lyapunov orbits (periods $13.3$ and $15.3$ days), which are strongly unstable (stability indices of about $690$ and $530$), so any error in the Coriolis or gravity terms is amplified hundreds of times per period. Each must return to its initial state after exactly one published period. For all three the Jacobi constant computed from the published state agrees with the catalog value to 14 digits, and the closure error falls at observed orders $3.87$--$4.10$ (Figure~\ref{fig:jpl}). An error in $\bff$ would make the closure error level off at a nonzero value instead.
+\paragraph{Published periodic orbits.} Because $\mu = 0$ multiplies every Moon term by zero, the two-body test cannot detect a mistake in those terms. We therefore also integrate three planar orbits from JPL's Earth--Moon CR3BP catalog~\cite{jpl_periodic}, each with the catalog's own $\mu = 0.01215058561$: a distant retrograde orbit of Artemis~I's size~\cite{artemis1_dro} (period $14.0$ days), and L1 and L2 Lyapunov orbits (periods $13.3$ and $15.3$ days), which are strongly unstable (stability indices of about $690$ and $530$), so any error in the Coriolis or gravity terms is amplified hundreds of times per period. Each must return to its initial state after exactly one published period. For all three the Jacobi constant computed from the published state agrees with the catalog value to 14 digits, and the closure error falls at observed orders $3.87$--$4.10$ (Figure~\ref{fig:jpl}). An error in $\bff$ would make the closure error level off at a nonzero value instead.
 
-\paragraph{Jacobi constant.} Along the nominal free return, from TLI to entry interface, the maximum drift $\max_k |C(t_k) - C(0)|$ falls at observed orders $4.03$--$4.22$ (Figure~\ref{fig:jpl}), reaching $3.5\times10^{-8}$ at the study time step.
+\paragraph{Jacobi constant.} Along the nominal free return, from TLI to entry interface, the maximum drift $\max_k |C(t_k) - C(0)|$ falls at observed orders $4.03$--$4.22$ in the asymptotic range (Figure~\ref{fig:jpl}), reaching $3.5\times10^{-8}$ at the study time step.
 
 \begin{figure}[t]
 \centering
@@ -372,7 +372,7 @@ Timing $\delta t$ & $-0.200$\,s & $+0.165$\,s & $0.365$\,s \\
 \end{tabular}
 \end{table}
 
-\paragraph{Interpretation.} Both windows are asymmetric, wider on the shallow (under-burn, early) side, because $\gEI$ curves toward $0^\circ$ as the vacuum perigee rises toward the entry interface. The answer to Q1 is that an open-loop TLI must be accurate to within $-8.1/{+6.7}$\,mm/s in magnitude and $-0.20/{+0.17}$\,s in timing, millimetres per second and fractions of a second as we hypothesized. That is far tighter than an open-loop burn of more than 3\,km/s can be expected to deliver, so a free return is therefore only abort-safe in practice if it is followed by midcourse corrections, which motivates Q2.
+\paragraph{Interpretation.} Both windows are asymmetric, wider on the shallow (under-burn, early) side, because $\gEI$ curves toward $0^\circ$ as the vacuum perigee rises toward the entry interface. The answer to Q1 is that an open-loop TLI must be accurate to within $-8.1/{+6.7}$\,mm/s in magnitude and $-0.20/{+0.17}$\,s in timing, millimetres per second and fractions of a second as we hypothesized. That is far tighter than an open-loop burn of more than 3\,km/s can be expected to deliver, so a free return is only abort-safe in practice if it is followed by midcourse corrections, which motivates Q2.
 
 \subsection{Q2: What does correcting an injection error cost?}
 
@@ -410,7 +410,7 @@ The answer to Q2 is therefore that correcting \emph{early} is cheapest by a wide
 
 The corridor is used as a targeting criterion; atmospheric flight, heating, skip dynamics, and entry guidance are outside the model. The planar, circular CR3BP neglects the Moon's inclination and eccentricity, solar gravity, and $J_2$, so absolute values will differ from a real mission; the orders of magnitude of the sensitivities and the trends in correction cost are the transferable results. Burns are impulsive, magnitude and timing errors are studied separately, and Q2 compares two burn directions rather than optimizing over all of them, so its costs are upper bounds on the best single burn.
 
-{\sloppy As a check on how far the absolute numbers transfer, the notebooks \texttt{ApolloComparison.ipynb} and \texttt{ArtemisIIComparison.ipynb} run the same model from the flown post-TLI states of Apollo~8 and Artemis~II (JPL Horizons ephemeris). Once its lunar pass is matched to the real one with a velocity adjustment of 8--14\,m/s, and with the Moon placed at its actual distance for that date, the model reproduces Artemis~II's maximum distance from Earth, entry time and entry speed to within $1\%$. Its entry angle, however, is only reliable when started within the final $\sim$20 hours, because the real flyby tilted the return leg about $20^\circ$ out of the Moon's orbital plane. This is the same extreme sensitivity of $\gEI$ that Q1 quantifies, and it is why real missions plan several midcourse corrections.\par}
+{\sloppy As a check on how far the absolute numbers transfer, the notebooks \texttt{ApolloComparison.ipynb} and \texttt{ArtemisIIComparison.ipynb} run the same model from the flown post-TLI states of Apollo~8 and Artemis~II (JPL Horizons ephemeris~\cite{jpl_horizons}). Once its lunar pass is matched to the real one with a velocity adjustment of 8--14\,m/s, and with the Moon placed at its actual distance for that date, the model reproduces Artemis~II's maximum distance from Earth, entry time and entry speed to within $1\%$. Its entry angle, however, is only reliable when started within the final $\sim$20 hours, because the real flyby tilted the return leg about $20^\circ$ out of the Moon's orbital plane. This is the same extreme sensitivity of $\gEI$ that Q1 quantifies, and it is why real missions plan several midcourse corrections.\par}
 
 % =====================================================================
 \section{Contributions}
@@ -474,8 +474,16 @@ J.~R.~Rea, L.~McNamara, and M.~Kane, ``Orion Artemis I Entry Performance,'' AAS 
 \url{https://ntrs.nasa.gov/citations/20240000024}
 
 \bibitem{jpl_periodic}
-JPL Solar System Dynamics, ``Three-Body Periodic Orbits,'' Earth--Moon system, DRO family.
+JPL Solar System Dynamics, ``Three-Body Periodic Orbits,'' Earth--Moon system, DRO and Lyapunov families.
 \url{https://ssd.jpl.nasa.gov/tools/periodic_orbits.html}
+
+\bibitem{jpl_horizons}
+JPL Solar System Dynamics, ``Horizons System,'' ephemerides of Artemis~II (spacecraft $-1024$) and the Moon (301).
+\url{https://ssd.jpl.nasa.gov/horizons/}
+
+\bibitem{artemis1_dro}
+R.~A.~Eckman, C.~Barrett, A.~L.~Batcha, and B.~J.~Killeen, ``Trajectory Operations of the Artemis I Mission,'' AAS Paper 23-363, AAS/AIAA Astrodynamics Specialist Conference, Big Sky, MT, 2023.
+\url{https://ntrs.nasa.gov/citations/20230010480}
 
 \bibitem{szebehely}
 V.~Szebehely, \emph{Theory of Orbits: The Restricted Problem of Three Bodies}, Academic Press, 1967.
