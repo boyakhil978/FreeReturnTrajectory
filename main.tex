@@ -42,7 +42,7 @@ Apollo~13 shows both why free return matters and why it is not sufficient on its
 
 Returning to Earth's vicinity is therefore not enough: the spacecraft must reach the atmosphere within a narrow band of \emph{entry flight-path angle} $\gEI$. Too shallow, and the capsule skips off the atmosphere; too steep, and deceleration and heating exceed crew and vehicle limits. Modern capsules such as Orion define their entry corridor in terms of $\gEI$ and the vehicle's lift-to-drag ratio~\cite{rea_orion}; on Artemis~I, Orion reached entry interface at $\gEI = -5.66^\circ$ and an inertial speed of $36{,}063$\,ft/s ($\approx 10.99$\,km/s)~\cite{rea_artemis1}, inside the Apollo corridor.
 
-The lunar flyby strongly amplifies small errors in the TLI burn. Preliminary simulations indicate that a $1$\,m/s error in TLI magnitude shifts the return perigee by roughly $3{,}600$\,km, and a $1$\,s error in burn timing shifts it by roughly $150$\,km \todo{confirm both numbers with our own RK4 implementation}. A corridor only a few degrees wide may therefore demand TLI accuracy at the millimeter-per-second and sub-second level, beyond what an engine can deliver open-loop, which is why midcourse corrections exist. This project quantifies those accuracy requirements and the propellant cost of correcting an imperfect burn.
+The lunar flyby strongly amplifies small errors in the TLI burn. Simulating our nominal free return (defined below) shows that, to first order, a $1$\,mm/s error in TLI magnitude changes $\gEI$ by about $0.14^\circ$, and a $1$\,s error in burn timing changes it by about $5.7^\circ$. The entire $2.15^\circ$ corridor therefore corresponds to only about $15$\,mm/s of TLI magnitude and about $0.4$\,s of burn timing: accuracy at the millimeter-per-second and sub-second level, beyond what an engine can deliver open-loop, which is why midcourse corrections exist. This project quantifies those accuracy requirements and the propellant cost of correcting an imperfect burn.
 
 \subsection{Research questions}
 
@@ -72,7 +72,7 @@ Figure~\ref{fig:geometry} shows the geometry: the spacecraft departs a low Earth
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/premise_geometry.pdf}
-\caption{(a) Illustrative free-return trajectory in the rotating Earth--Moon frame (Earth and Moon not to scale). (b) Definition of the entry flight-path angle $\gEI$ at entry interface: the angle between the Earth-relative inertial velocity $\vE$ and the local horizontal, negative when descending.}
+\caption{(a) The nominal free return in the rotating Earth--Moon frame, computed with our RK4 implementation (Earth and Moon not to scale). (b) Definition of the entry flight-path angle $\gEI$ at entry interface: the angle between the Earth-relative inertial velocity $\vE$ and the local horizontal, negative when descending.}
 \label{fig:geometry}
 \end{figure}
 
@@ -87,18 +87,18 @@ Figure~\ref{fig:geometry} shows the geometry: the spacecraft departs a low Earth
 Quantity & Symbol & Dimensional & Nondimensional \\
 \midrule
 Length unit (Earth--Moon distance) & $L$ & $384{,}400$ km & 1 \\
-Time unit (inverse orbital rate) & $T$ & $4.348$ days & 1 \\
-Velocity unit & $V = L/T$ & $1.0232$ km/s & 1 \\
-Mass parameter & $\mu = m_M/(m_E+m_M)$ & --- & $0.012151$ \\
-Earth radius & $R_E$ & $6{,}378$ km & $0.016592$ \\
-Moon radius & $R_M$ & $1{,}737$ km & $0.004519$ \\
-Parking orbit radius (185 km alt.) & $r_0$ & $6{,}563$ km & $0.017073$ \\
-Entry interface radius (400{,}000 ft alt.) & $r_{\mathrm{EI}}$ & $6{,}499.9$ km & $0.016909$ \\
+Time unit (inverse orbital rate) & $T$ & $4.3425$ days & 1 \\
+Velocity unit & $V = L/T$ & $1.0246$ km/s & 1 \\
+Mass parameter & $\mu = m_M/(m_E+m_M)$ & --- & $0.012154$ \\
+Earth radius & $R_E$ & $6{,}378.165$ km & $0.016593$ \\
+Moon radius & $R_M$ & $1{,}737.4$ km & $0.004520$ \\
+Parking orbit radius (185 km alt.) & $r_0$ & $6{,}563.2$ km & $0.017074$ \\
+Entry interface radius (400{,}000 ft alt.) & $r_{\mathrm{EI}}$ & $6{,}500.1$ km & $0.016910$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\noindent The entry-interface altitude of 400{,}000\,ft follows the convention used for Orion~\cite{rea_artemis1}.
+\noindent The time unit is not set independently: the nondimensional equations assume $G(m_E + m_M) = L^3/T^2$, so $T = \sqrt{L^3/G(m_E+m_M)}$ with $m_E = 5.9722\times10^{24}$\,kg and $m_M = 7.3477\times10^{22}$\,kg. The entry-interface altitude of 400{,}000\,ft follows the convention used for Orion~\cite{rea_artemis1}.
 
 \paragraph{Governing equations.} With state $\bu = [x,\ y,\ v_x,\ v_y]^T$ in the rotating frame,
 \begin{equation}
@@ -130,7 +130,7 @@ v_{x,0} &= -v_c \sin\varphi + y_0, \qquad v_{y,0} = v_c\cos\varphi - (x_0+\mu).
 \end{equation}
 The final line converts the inertial velocity to the rotating frame via $\mathbf{v}_{\mathrm{rot}} = \mathbf{v}_{\mathrm{in}} - \boldsymbol{\omega}\times\mathbf{r}$, including Earth's motion about the barycenter. Burn \emph{timing} maps to $\varphi$: a timing error $\delta t$ shifts the burn location by $\delta\varphi = n_{\mathrm{LEO}}\,\delta t$, where $n_{\mathrm{LEO}} = \sqrt{(1-\mu)/r_0^3}$ is the parking-orbit angular rate.
 
-\paragraph{Nominal trajectory and parameters.} The nominal free return is found numerically. A preliminary scan located a free return at $\Delta v \approx 3.14$\,km/s and $\varphi \approx 4.12$\,rad, with a closest lunar approach of roughly $6{,}900$\,km altitude and a return to Earth after roughly $7.5$ days. Its vacuum perigee lies near the entry-interface altitude, too shallow for atmospheric entry, so it is \emph{retargeted} by root-finding on $\Delta v$ (with $\varphi$ fixed) until $\gEI = -6.52^\circ$. Table~\ref{tab:params} lists the parameters the investigation varies and the quantities it measures.
+\paragraph{Nominal trajectory and parameters.} The nominal free return is found numerically. A scan over $\Delta v$ and $\varphi$ locates a free-return family near $\varphi = 4.12$\,rad; holding $\varphi$ fixed, bisection on $\Delta v$ (\texttt{scripts/retarget\_nominal.py}) gives $\Delta v = 3.144030$\,km/s, for which $\gEI = -6.520^\circ$. Just below this value the return skips past the atmosphere (at $\Delta v = 3.1440$\,km/s the vacuum perigee is $147$\,km), and $0.5$\,m/s above it the entry is already $-28.7^\circ$. The nominal passes $6{,}947$\,km above the lunar surface $3.77$ days after TLI and reaches entry interface $7.56$ days after TLI at $10.99$\,km/s, the same as Orion's measured entry speed on Artemis~I~\cite{rea_artemis1}. Table~\ref{tab:params} lists the parameters the investigation varies and the quantities it measures.
 
 \begin{table}[h]
 \centering
@@ -205,24 +205,34 @@ On the imaginary axis, $w = iy$,
 \begin{equation}
 |R(iy)|^2 = 1 - \frac{y^6}{72} + \frac{y^8}{576},
 \end{equation}
-so $|R(iy)| \le 1$ if and only if $y^2 \le 8$, i.e.\ $|y| \le 2\sqrt{2} \approx 2.83$. By contrast, forward Euler gives $|1+iy|^2 = 1 + y^2 > 1$ for every $y \neq 0$, and the stability region of AB2 touches the imaginary axis only at the origin. \todo{plot the RK4 stability region and mark the largest $|\lambda\Delta t|$ along the trajectory, at perigee.}
+so $|R(iy)| \le 1$ if and only if $y^2 \le 8$, i.e.\ $|y| \le 2\sqrt{2} \approx 2.83$. By contrast, forward Euler gives $|1+iy|^2 = 1 + y^2 > 1$ for every $y \neq 0$, and the stability region of AB2 touches the imaginary axis only at the origin; AB3 and AB4 cover it only up to $|y| \approx 0.72$ and $0.43$.
+
+\paragraph{Eigenvalues along the trajectory.} Figure~\ref{fig:stiffness}(a) shows the largest Jacobian eigenvalue magnitude along the nominal free return. It peaks at the low-Earth ends of the trip, where the eigenvalues are $\pm\sqrt{2}\,n$ (real) and $\pm i\,n$, with $n$ the local orbital rate; at the parking orbit $|\lambda|_{\max} = 630$. The negative-real and imaginary eigenvalues must lie inside the stability region. The positive-real one is the physical divergence of neighbouring trajectories, the same mechanism that amplifies TLI errors, and must be resolved accurately rather than damped. At the study time step (Section~\ref{sec:verification}) $|\lambda|\Delta t = 0.019$, far inside the region (Figure~\ref{fig:stiffness}b).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/stiffness_along_trajectory.pdf}
+\caption{(a) Largest Jacobian eigenvalue magnitude along the nominal free return; the central peak is the lunar flyby. (b) $\lambda\Delta t$ at the state with the largest $|\lambda|$, on the RK4 stability region, for the study time step and for $\Delta t = 10^{-3}$. Even at $\Delta t = 10^{-3}$ every decaying and oscillatory mode is stable, yet that run never returns to Earth: the step is limited by accuracy, not stability.}
+\label{fig:stiffness}
+\end{figure}
 
 \subsection{Justification: accuracy, stability, and cost}
 
 \begin{itemize}[leftmargin=2em]
   \item \textbf{Accuracy.} The required $\gEI$ accuracy is a small fraction of a $2.15^\circ$ corridor, and the sensitivities in Q1 must be resolved at the sub-mm/s level. A fourth-order method reaches this accuracy with orders of magnitude fewer steps than a first- or second-order method.
-  \item \textbf{Stability.} Linearized orbital motion is locally oscillatory, with Jacobian eigenvalues near the imaginary axis. RK4's stability region contains a segment of that axis; forward Euler's and AB2's do not, so both would artificially amplify orbital oscillations at any $\Delta t$.
-  \item \textbf{Not stiff, so explicit is appropriate.} The Jacobian eigenvalues are largest near Earth, but there the solution itself varies on the same short timescale. The step is limited by \emph{accuracy}, not stability, so an implicit method (backward Euler, trapezoid, BDF2) would add a nonlinear solve every step with no benefit. We show this directly: at $\Delta t = 10^{-3}$, RK4 is stable at perigee ($|\lambda \Delta t| \approx 0.45 < 2.83$) yet badly inaccurate \todo{confirm and show}.
-  \item \textbf{Cost, and why adaptive stepping is not used.} The problem is multi-scale: the parking-orbit period is $\approx 0.014$ time units against a trip of $\approx 1.7$. Adaptive step-size control would therefore reduce function evaluations. However, fixed-step RK4 at $\Delta t \approx 3\times 10^{-5}$ ($\approx 12$\,s real time) costs only a few seconds per run, and the full study requires a few hundred runs. Adaptive control would add an error estimator, step-rejection logic, and a less transparent convergence study, without changing the answers. \todo{report measured runtime per run.}
+  \item \textbf{Stability.} Near Earth the motion has oscillatory modes $\pm i\,n$ on the imaginary axis. RK4's stability region contains the segment $|\lambda\Delta t| \le 2\sqrt{2}$ of that axis; forward Euler's and AB2's contain none of it, so both would artificially amplify orbital oscillations at any $\Delta t$.
+  \item \textbf{Not stiff, so explicit is appropriate.} The Jacobian eigenvalues are largest near Earth, but there the solution itself varies on the same short timescale. The step is limited by \emph{accuracy}, not stability, so an implicit method (backward Euler, trapezoid, BDF2) would add a nonlinear solve every step with no benefit. Figure~\ref{fig:stiffness}(b) shows this directly: at $\Delta t = 10^{-3}$, $|\lambda\Delta t| = 0.63$ for the real modes and $0.45$ for the oscillatory ones, well inside the region, yet the trajectory never returns to Earth.
+  \item \textbf{One step, not multistep.} A midcourse correction changes the velocity instantly, and locating entry interface needs a partial step. A one-step method handles both directly; a multistep method such as AB4 would have to restart its history after every burn. (At our time step $|\lambda|\Delta t \approx 0.02$ is also inside AB4's region, so stability alone would not rule AB4 out.)
+  \item \textbf{Cost, and why adaptive stepping is not used.} The problem is multi-scale: the parking-orbit period is $0.0141$ time units against a trip of $1.740$. Adaptive step-size control would therefore reduce function evaluations. However, fixed-step RK4 at the study time step $\Delta t = 3.05\times 10^{-5}$ ($11.4$\,s) takes about $2$\,s per run in plain Python, and the full study requires a few hundred runs. Adaptive control would add an error estimator, step-rejection logic, and a less transparent convergence study, without changing the answers.
 \end{itemize}
 
 \subsection{Algorithm: advancing from $t_k$ to $t_{k+1}$}
 
 \begin{enumerate}[leftmargin=2em]
   \item Evaluate $\mathbf{k}_1,\dots,\mathbf{k}_4$ from $\bu_k$ and form $\bu_{k+1}$ via Eq.~\eqref{eq:rk4}.
-  \item \textbf{Entry-interface event.} If, after the flyby, $|\rE| - r_{\mathrm{EI}}$ changes sign between $\bu_k$ and $\bu_{k+1}$, find $\tau \in (0, \Delta t)$ by secant iteration such that a single RK4 step of length $\tau$ from $\bu_k$ lands exactly on $|\rE| = r_{\mathrm{EI}}$, then evaluate Eq.~\eqref{eq:gamma}. Locating the event with an RK4 step preserves $O(\Delta t^4)$ accuracy; taking the minimum over sampled steps would introduce an $O(\Delta t^2)$ error.
+  \item \textbf{Entry-interface event.} If, after the flyby, $|\rE| - r_{\mathrm{EI}}$ changes sign between $\bu_k$ and $\bu_{k+1}$, find $\tau \in (0, \Delta t)$ by root-finding (Brent's method) such that a single RK4 step of length $\tau$ from $\bu_k$ lands exactly on $|\rE| = r_{\mathrm{EI}}$, then evaluate Eq.~\eqref{eq:gamma}. Locating the event with an RK4 step preserves $O(\Delta t^4)$ accuracy; taking the minimum over sampled steps would introduce an $O(\Delta t^2)$ error.
   \item \textbf{Lunar impact.} If $r_2 < R_M$, flag the run and stop.
-  \item \textbf{Midcourse correction.} If $t_{k+1} = t_c$, add $\Delta v_c$ along $\vE/|\vE|$ to the velocity components of $\bu_{k+1}$.
+  \item \textbf{Midcourse correction.} At the step $k$ with $t_k$ nearest $t_c$, add $\Delta v_c$ along $\vE/|\vE|$ to the velocity components of $\bu_k$ before stepping. The position is unchanged, so the same vector is added to the rotating-frame velocity.
 \end{enumerate}
 
 \subsection{Targeting}
@@ -244,7 +254,8 @@ Retargeting the nominal (find $\Delta v$ such that $\gEI = -6.52^\circ$) and siz
 \toprule
 Test & What it checks & Pass criterion \\
 \midrule
-Two-body exact solution ($\mu = 0$) & Equations and frame transformation coded correctly & Error vs.\ exact solution decreases as $O(\Delta t^4)$ \\
+Two-body exact solution ($\mu = 0$) & Integrator and rotating-frame terms coded correctly & Error vs.\ exact solution decreases as $O(\Delta t^4)$ \\
+Published periodic orbit (JPL) & Full three-body equations, including every Moon term & Closure error after one period decreases as $O(\Delta t^4)$ \\
 Jacobi constant & Conservation law of the coasting CR3BP & $\max_t |C(t) - C(0)|$ decreases as $O(\Delta t^4)$ \\
 Convergence rate & Method achieves its theoretical order & Observed order $\approx 4$ in the asymptotic range \\
 Event-location order & $\gEI$ inherits fourth-order accuracy & $\gEI$ error decreases as $O(\Delta t^4)$ \\
@@ -252,18 +263,58 @@ Event-location order & $\gEI$ inherits fourth-order accuracy & $\gEI$ error decr
 \end{tabular}
 \end{table}
 
-\paragraph{Two-body exact solution.} With $\mu = 0$, Eq.~\eqref{eq:cr3bp} reduces to Kepler motion viewed in a rotating frame. We take an exact inertial ellipse with perigee radius $r_0$ and eccentricity $e \approx 0.97$, close to the shape of the translunar ellipse, obtain the inertial state by solving Kepler's equation $M = E - e\sin E$ with Newton's method, and rotate it into the rotating frame:
+\paragraph{Two-body exact solution.} Setting $\mu = 0$ in Eq.~\eqref{eq:cr3bp} places Earth at the origin with unit gravitational parameter, so the system reduces to Kepler motion viewed from a frame rotating at unit rate, for which the inertial solution is known exactly. We choose an ellipse with perigee radius $r_p = r_0$ and eccentricity $e = 0.97$, close to the shape of the translunar ellipse, giving
+\begin{equation}
+a = \frac{r_p}{1-e} = 0.5691, \qquad b = a\sqrt{1-e^2}, \qquad n = a^{-3/2}, \qquad P = \frac{2\pi}{n} = 2.698 .
+\end{equation}
+Measuring time from perigee, the eccentric anomaly $E$ satisfies Kepler's equation $nt = E - e\sin E$, which we solve with Newton's method,
+\begin{equation}
+E_{j+1} = E_j - \frac{E_j - e\sin E_j - nt}{1 - e\cos E_j}, \qquad E_0 = \pi,
+\end{equation}
+to $|E_{j+1}-E_j| < 10^{-15}$. The inertial state follows from
+\begin{equation}
+\mathbf{r}_{\mathrm{in}} = \begin{bmatrix} a(\cos E - e) \\ b\sin E \end{bmatrix}, \qquad
+\mathbf{v}_{\mathrm{in}} = \frac{n}{1 - e\cos E}\begin{bmatrix} -a\sin E \\ b\cos E \end{bmatrix},
+\end{equation}
+and is rotated into the CR3BP frame by
 \begin{equation}
 \mathbf{r}_{\mathrm{rot}} = \mathsf{R}(-t)\,\mathbf{r}_{\mathrm{in}}, \qquad
-\mathbf{v}_{\mathrm{rot}} = \mathsf{R}(-t)\,\mathbf{v}_{\mathrm{in}} + \left(y_{\mathrm{rot}},\ -x_{\mathrm{rot}}\right),
+\mathbf{v}_{\mathrm{rot}} = \mathsf{R}(-t)\,\mathbf{v}_{\mathrm{in}} + \begin{bmatrix} y_{\mathrm{rot}} \\ -x_{\mathrm{rot}} \end{bmatrix}, \qquad
+\mathsf{R}(-t) = \begin{bmatrix} \cos t & \sin t \\ -\sin t & \cos t \end{bmatrix},
 \end{equation}
-where $\mathsf{R}(\theta)$ is the counterclockwise rotation matrix. This test exercises the most demanding part of the real problem: a fast, high-curvature perigee passage. \todo{figure: log--log error vs.\ $\Delta t$ with a slope-4 reference line.}
+where the second term in $\mathbf{v}_{\mathrm{rot}}$ comes from differentiating the time-dependent rotation. The integration starts from the exact perigee state $\bu_0 = [\,r_p,\ 0,\ 0,\ v_p - r_p\,]^T$ with $v_p = \sqrt{(1+e)/r_p} = 10.74$ ($11.0$\,km/s), the same speed as TLI and lunar-return entry, and calls the same right-hand-side function used for all results with $\mu = 0$. We measure $\varepsilon(\Delta t) = \|\mathbf{r}_{\mathrm{num}}(t_f) - \mathbf{r}_{\mathrm{exact}}(t_f)\|_2$ at $t_f = P/2$ (apogee) and $t_f = P$ (back at perigee), with $\Delta t = t_f/N$ so that the march lands exactly on $t_f$. Figure~\ref{fig:kepler} shows observed orders $4.02$--$4.21$. At every $\Delta t$ the full-orbit error is about $36\times$ the half-orbit error, because most of the error accumulates during the perigee passage; this is why perigee sets the time step.
 
-\paragraph{Convergence study.} The rate study uses the full state at a fixed final time, compared against a reference RK4 solution with $\Delta t/16$, over $\Delta t$ from $2.5\times10^{-4}$ to $7.8\times10^{-6}$. Preliminary runs show that $\Delta t \gtrsim 10^{-3}$ produces trajectories that never return to Earth, so we report where the asymptotic range begins. \todo{figure and observed orders.}
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.62\textwidth]{figures/verify_kepler.pdf}
+\caption{RK4 position error against the exact two-body solution ($\mu = 0$, $e = 0.97$, perigee at $r_0$) after half an orbit and after a full orbit. Both converge at fourth order.}
+\label{fig:kepler}
+\end{figure}
+
+\paragraph{Published periodic orbits.} Because $\mu = 0$ multiplies every Moon term by zero, the two-body test cannot detect a mistake in those terms. We therefore also integrate three planar orbits from JPL's Earth--Moon CR3BP catalog~\cite{jpl_periodic}, each with the catalog's own $\mu = 0.01215058561$: a distant retrograde orbit of Artemis~I's size (period $14.0$ days), and L1 and L2 Lyapunov orbits (periods $13.3$ and $15.3$ days), which are strongly unstable (stability indices of about $690$ and $530$), so any error in the Coriolis or gravity terms is amplified hundreds of times per period. Each must return to its initial state after exactly one published period. For all three the Jacobi constant computed from the published state agrees with the catalog value to 14 digits, and the closure error falls at observed orders $3.87$--$4.10$ (Figure~\ref{fig:jpl}). An error in $\bff$ would make the closure error level off at a nonzero value instead.
+
+\paragraph{Jacobi constant.} Along the nominal free return, from TLI to entry interface, the maximum drift $\max_k |C(t_k) - C(0)|$ falls at observed orders $4.03$--$4.22$ (Figure~\ref{fig:jpl}), reaching $3.5\times10^{-8}$ at the study time step.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.49\textwidth]{figures/verify_jpl_orbits.pdf}\hfill
+\includegraphics[width=0.49\textwidth]{figures/verify_jacobi.pdf}
+\caption{Left: closure error of three JPL catalog orbits after one published period. Right: Jacobi-constant drift along the nominal free return. Both decrease at fourth order.}
+\label{fig:jpl}
+\end{figure}
+
+\paragraph{Convergence study.} The self-convergence study in \texttt{FreeReturnTrajectory.ipynb} integrates the nominal to $t_f = 1.7$ (just before entry interface) and compares the full state against a reference with $\Delta t = t_f/2^{17}$, for $\Delta t = t_f/2^{12}$ to $t_f/2^{16}$. The observed orders are $4.50$, $4.21$, $4.12$, $4.14$. At $\Delta t \approx 10^{-3}$ the trajectory never returns to Earth, so that step lies outside the asymptotic range.
 
 \subsection{Selecting simulation parameters}
 
-The time step must make the numerical error in $\gEI$ negligible compared with both (i) the corridor width, $2.15^\circ$, and (ii) the change in $\gEI$ produced by the smallest injection error we resolve, $\approx 0.1$\,mm/s. We plot the $\gEI$ error against $\Delta t$, select the largest $\Delta t$ satisfying both requirements with a safety factor, and report its real-time equivalent and cost per run. That $\Delta t$ is used for all results in Section~\ref{sec:results}. \todo{figure and chosen $\Delta t$.}
+The time step must make the numerical error in $\gEI$ negligible compared with both (i) the corridor width, $2.15^\circ$, and (ii) the change in $\gEI$ produced by the smallest injection error we resolve, $\approx 0.1$\,mm/s. At the nominal $d\gEI/d(\Delta v) = -0.14^\circ$ per mm/s, so requirement (ii) is $0.014^\circ$ and requirement (i), $1\%$ of the corridor, is $0.0215^\circ$. Figure~\ref{fig:dt} plots the $\gEI$ error against $\Delta t$, measured against a reference with $\Delta t = 1.9\times10^{-6}$. The error falls at observed orders $4.39$--$4.03$, which also confirms that the event location keeps fourth-order accuracy. We use $\Delta t = 3.05\times 10^{-5}$ ($11.4$\,s), where the $\gEI$ error is $2.3\times10^{-4}$ degrees, about $60\times$ below the tighter requirement, at about $2$\,s per run. This $\Delta t$ is used for all results in Section~\ref{sec:results}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.62\textwidth]{figures/select_dt.pdf}
+\caption{Error in the entry flight-path angle against time step, with the two accuracy requirements. The vertical line marks the study time step.}
+\label{fig:dt}
+\end{figure}
 
 % =====================================================================
 \section{Results}
@@ -306,10 +357,11 @@ The corridor is used as a targeting criterion; atmospheric flight, heating, skip
 
 All code is available at https://github.com/boyakhil978/FreeReturnTrajectory. The repository separates the numerical method from the studies that use it:
 \begin{itemize}[leftmargin=2em]
-  \item \texttt{cr3bp.py}: right-hand side $\bff(\bu)$, initial-condition builder, $\gEI$, and $C$;
-  \item \texttt{rk4.py}: fixed-step marcher \texttt{u, times = rk4(f, u0, t\_end, dt)} and event location;
-  \item \texttt{verify\_*.py}: Kepler, Jacobi, convergence, and time-step selection studies;
-  \item \texttt{study\_q1.py}, \texttt{study\_q2.py}: results figures;
+  \item \texttt{freereturn/integrators.py}: the numerical method, \texttt{rk4\_step} and the fixed-step marcher \texttt{u, times = rk4(f, u\_start, t\_end, dt)};
+  \item \texttt{freereturn/dynamics.py}: right-hand side $\bff(\bu)$, its Jacobian, and the Jacobi constant $C$;
+  \item \texttt{freereturn/trajectory.py}, \texttt{freereturn/entry.py}: TLI initial state, $\gEI$, impulsive burns, and the marcher from TLI to entry interface with event location;
+  \item \texttt{scripts/}: targeting of the nominal, the verification and time-step selection studies, and the results figures;
+  \item \texttt{tests/}: automated checks of the model code (\texttt{python -m pytest});
   \item \texttt{README.md}: instructions to reproduce every figure.
 \end{itemize}
 
@@ -338,6 +390,10 @@ J.~R.~Rea, ``Orion Entry Performance-Based Center-of-Gravity Box,'' AIAA Guidanc
 \bibitem{rea_artemis1}
 J.~R.~Rea, L.~McNamara, and M.~Kane, ``Orion Artemis I Entry Performance,'' AAS Paper 24-174, NASA Johnson Space Center, 2024.
 \url{https://ntrs.nasa.gov/citations/20240000024}
+
+\bibitem{jpl_periodic}
+JPL Solar System Dynamics, ``Three-Body Periodic Orbits,'' Earth--Moon system, DRO family.
+\url{https://ssd.jpl.nasa.gov/tools/periodic_orbits.html}
 
 \bibitem{szebehely}
 V.~Szebehely, \emph{Theory of Orbits: The Restricted Problem of Three Bodies}, Academic Press, 1967.
