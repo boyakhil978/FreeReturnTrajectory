@@ -416,7 +416,15 @@ The corridor is used as a targeting criterion; atmospheric flight, heating, skip
 \section{Contributions}
 % =====================================================================
 
-\todo{each member's role and estimated percentage contribution; every member must contribute to at least one of Sections 1--4.}
+Every member was actively involved in all parts of the project: choosing the premise, selecting and justifying the method, implementing and verifying the code, producing the results, and writing the report. Decisions were made together, and each member reviewed the others' work. Each of us also led particular areas, as described below. We estimate our contributions as equal, at 25\% each.
+
+\textbf{Zohair Hasson (25\%)} came up with the final prompt the project is built around: how accurate a free-return translunar burn must be, and what correcting an injection error costs. He led the technical writing of the report and shaped how the premise, method and findings are presented. He also modified the code and results so that the studies addressed the research questions directly.
+
+\textbf{Jammir Aloya (25\%)} did most of the coding, including the core numerical implementation that every study relies on. He made sure each method in the code was valid and consistent with the report, so the equations, assumptions and parameters in the document match what the code computes. He also carried out most of the calculations behind the verification and results.
+
+\textbf{Akhil Boyapati (25\%)} created and maintained the GitHub repository and organized it so the numerical method is kept separate from the studies that use it. He revised the code for correctness and clarity, and worked on both the implementation and the numerical method, including its justification and verification.
+
+\textbf{Jeehyung Yoo (25\%)} helped produce the results and interpret what they mean for the research questions. He checked the validity of all the project documents, comparing the report against the code and the results so that every claim, number and figure is consistent and correct.
 
 % =====================================================================
 \section{Reproducibility}
@@ -439,7 +447,7 @@ All code is available at https://github.com/boyakhil978/FreeReturnTrajectory. Th
 
 Generative AI (Anthropic's Claude, used through Claude Code and the Claude chat interface) was used throughout the project, and every result was checked by the team.
 \begin{itemize}[leftmargin=2em]
-  \item \textbf{Ideation and premise.} \todo{team to confirm how AI was used in choosing the premise and finding sources.}
+  \item \textbf{Ideation and premise.} A set of motivating free body diagrams were selected that were interesting to us and AI was used to analyze and help us narrow down our choices. 
   \item \textbf{Method selection and justification.} Suggesting the triangular point $L_4$ as an equilibrium at which to evaluate the Jacobian, and using eigenvalue magnitudes for the stiffness ratio (both credited in \texttt{FreeReturnTrajectory.ipynb}); checking the RK4 truncation-error derivation symbolically.
   \item \textbf{Implementation and testing.} Organizing the code into the \texttt{freereturn} package with automated tests; writing the event location, verification, time-step selection and Q1/Q2 study scripts; retrieving the JPL periodic-orbit and Horizons data and writing the Apollo~8 and Artemis~II comparison notebooks. The RK4 integrator and equations of motion were written by the team, and AI-written code was reviewed and run by the team.
   \item \textbf{Figures and results.} Generating the figures from the study scripts and drafting and editing report text, including the results discussion; all numbers in the report come from the repository's code.
